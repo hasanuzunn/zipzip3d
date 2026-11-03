@@ -2,6 +2,8 @@ name: APK derle
 on:
   push:
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,3 +25,10 @@ jobs:
         with:
           name: ZipZip3D-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+      - name: APK'yı sürüm olarak yayınla
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk ZipZip3D.apk
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest ZipZip3D.apk --title "Zıp Zıp 3D (son sürüm)" --notes "Telefona indirip kurun. Kurulumda bilinmeyen kaynaklara izin verin."
+        env:
+          GH_TOKEN: ${{ github.token }}
